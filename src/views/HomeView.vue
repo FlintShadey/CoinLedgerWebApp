@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import GalaGamesLogo from '@/assets/GalaGames.png'
 
 const galaDialog = ref(false)
 const galaText = ref('')
@@ -127,7 +128,7 @@ const convertToCoinledger = async () => {
           <v-card-title class="text-h4 primary--text">
             Welcome to the CoinLedger Conversion Tool
           </v-card-title>
-          <v-card-subtitle>Convert your GALA reward data to CoinLedger CSV format</v-card-subtitle>
+            <v-card-subtitle class="text-center">Convert your GALA reward data to CoinLedger CSV format</v-card-subtitle>
         </v-card>
       </v-col>
     </v-row>
@@ -140,6 +141,14 @@ const convertToCoinledger = async () => {
             GALA Rewards Converter
           </v-card-title>
           <v-card-text>
+            <div class="text-center mb-4">
+              <img
+                :src="GalaGamesLogo"
+                alt="Gala Games Logo"
+                style="max-width: 150px; height: auto"
+              />
+            </div>
+
             <p class="text-body-1 mb-4">
               Paste your GALA rewards text data below and convert it to a CSV format compatible with
               CoinLedger. The tool will automatically detect "You received X GALA" entries and
@@ -163,6 +172,14 @@ const convertToCoinledger = async () => {
         </v-card-title>
 
         <v-card-text>
+          <div class="text-center mb-4">
+            <img
+              :src="GalaGamesLogo"
+              alt="Gala Games Logo"
+              style="max-width: 200px; height: auto"
+            />
+          </div>
+
           <v-textarea
             v-model="galaText"
             label="Paste your GALA rewards text data here"
