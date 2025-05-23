@@ -1,20 +1,122 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const coinData = ref([
-  { name: 'Bitcoin', symbol: 'BTC', price: 67500, change: 2.5 },
-  { name: 'Ethereum', symbol: 'ETH', price: 3200, change: -1.2 },
-  { name: 'Cardano', symbol: 'ADA', price: 0.65, change: 5.8 },
-  { name: 'Solana', symbol: 'SOL', price: 145, change: 3.4 },
-])
+const galaDialog = ref(false)
+const galaText = ref('')
+const isProcessing = ref(false)
+const successMessage = ref('')
+const errorMessage = ref('')
 
-const portfolio = ref([
-  { coin: 'Bitcoin', amount: 0.5, value: 33750 },
-  { coin: 'Ethereum', amount: 2.0, value: 6400 },
-  { coin: 'Cardano', amount: 1000, value: 650 },
-])
+const openGalaDialog = () => {
+  galaDialog.value = true
+  galaText.value = ''
+  successMessage.value = ''
+  errorMessage.value = ''
+}
 
-const totalValue = portfolio.value.reduce((sum, item) => sum + item.value, 0)
+const parseGalaRewards = (text: string) => {
+  // Pattern to capture GALA rewards
+  const pattern = /You received ([\d,\.]+) GALA/g
+  const matches = []
+  let match
+
+  while ((match = pattern.exec(text)) !== null) {
+    matches.push(match[1].replace(/,/g, '')) // Remove commas from amount
+  }
+
+  return matches
+}
+
+const generateCSV = (amounts: string[]) => {
+  // CSV headers
+  const headers = [
+    'Date (UTC)',
+    'Platform (Optional)',
+    'Asset Sent',
+    'Amount Sent',
+    'Asset Received',
+    'Amount Received',
+    'Fee Currency (Optional)',
+    'Fee Amount (Optional)',
+    'Type',
+    'Description (Optional)',
+    'TxHash (Optional)',
+  ]
+
+  const today = new Date()
+  const rows = [headers.join(',')]
+
+  amounts.forEach((amount, index) => {
+    const date = new Date(today)
+    date.setDate(date.getDate() - (index + 1))
+    const formattedDate = date.toLocaleDateString('en-US')
+
+    const row = [
+      formattedDate,
+      '', // Platform
+      '', // Asset Sent
+      '', // Amount Sent
+      'GALA', // Asset Received
+      amount, // Amount Received
+      '', // Fee Currency
+      '', // Fee Amount
+      'Mining Income', // Type
+      '', // Description
+      '', // TxHash
+    ]
+    rows.push(row.join(','))
+  })
+
+  return rows.join('\n')
+}
+
+const downloadCSV = (csvContent: string) => {
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  const link = document.createElement('a')
+  const url = URL.createObjectURL(blob)
+
+  link.setAttribute('href', url)
+  link.setAttribute('download', 'gala_rewards_data.csv')
+  link.style.visibility = 'hidden'
+
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+const convertToCoinledger = async () => {
+  if (!galaText.value.trim()) {
+    errorMessage.value = 'Please paste your GALA data first.'
+    return
+  }
+
+  try {
+    isProcessing.value = true
+    errorMessage.value = ''
+
+    const amounts = parseGalaRewards(galaText.value)
+
+    if (amounts.length === 0) {
+      errorMessage.value = 'No GALA rewards found in the provided text. Please check your data.'
+      return
+    }
+
+    const csvContent = generateCSV(amounts)
+    downloadCSV(csvContent)
+
+    successMessage.value = `Successfully converted ${amounts.length} GALA reward entries to CSV format!`
+
+    // Close dialog after a short delay
+    setTimeout(() => {
+      galaDialog.value = false
+    }, 2000)
+  } catch (error) {
+    errorMessage.value = 'An error occurred while processing your data. Please try again.'
+    console.error('Error processing GALA data:', error)
+  } finally {
+    isProcessing.value = false
+  }
+}
 </script>
 
 <template>
@@ -23,94 +125,77 @@ const totalValue = portfolio.value.reduce((sum, item) => sum + item.value, 0)
       <v-col cols="12">
         <v-card class="mb-6">
           <v-card-title class="text-h4 primary--text">
-            <v-icon left color="primary">mdi-currency-btc</v-icon>
-            Welcome to CoinLedger
+            Welcome to the CoinLedger Conversion Tool
           </v-card-title>
-          <v-card-subtitle> Track your cryptocurrency portfolio with ease </v-card-subtitle>
+          <v-card-subtitle>Convert your GALA reward data to CoinLedger CSV format</v-card-subtitle>
         </v-card>
       </v-col>
     </v-row>
 
     <v-row>
-      <v-col cols="12" md="6">
+      <v-col cols="12" md="8" offset-md="2">
         <v-card>
-          <v-card-title>
-            <v-icon left>mdi-chart-line</v-icon>
-            Market Overview
+          <v-card-title class="text-h5">
+            <v-icon class="mr-2">mdi-file-document-edit</v-icon>
+            GALA Rewards Converter
           </v-card-title>
           <v-card-text>
-            <v-list>
-              <v-list-item v-for="coin in coinData" :key="coin.symbol" class="px-0">
-                <template v-slot:prepend>
-                  <v-avatar color="primary">
-                    {{ coin.symbol.charAt(0) }}
-                  </v-avatar>
-                </template>
-                <v-list-item-title>{{ coin.name }}</v-list-item-title>
-                <v-list-item-subtitle>{{ coin.symbol }}</v-list-item-subtitle>
-                <template v-slot:append>
-                  <div class="text-right">
-                    <div>${{ coin.price.toLocaleString() }}</div>
-                    <v-chip :color="coin.change > 0 ? 'green' : 'red'" size="small" variant="flat">
-                      {{ coin.change > 0 ? '+' : '' }}{{ coin.change }}%
-                    </v-chip>
-                  </div>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-      </v-col>
+            <p class="text-body-1 mb-4">
+              Paste your GALA rewards text data below and convert it to a CSV format compatible with
+              CoinLedger. The tool will automatically detect "You received X GALA" entries and
+              create properly formatted records.
+            </p>
 
-      <v-col cols="12" md="6">
-        <v-card>
-          <v-card-title>
-            <v-icon left>mdi-wallet</v-icon>
-            My Portfolio
-          </v-card-title>
-          <v-card-text>
-            <v-alert type="info" variant="tonal" class="mb-4">
-              Total Portfolio Value: ${{ totalValue.toLocaleString() }}
-            </v-alert>
-            <v-list>
-              <v-list-item v-for="item in portfolio" :key="item.coin" class="px-0">
-                <template v-slot:prepend>
-                  <v-icon color="primary">mdi-currency-usd</v-icon>
-                </template>
-                <v-list-item-title>{{ item.coin }}</v-list-item-title>
-                <v-list-item-subtitle>{{ item.amount }} coins</v-list-item-subtitle>
-                <template v-slot:append>
-                  <v-chip color="primary" variant="flat">
-                    ${{ item.value.toLocaleString() }}
-                  </v-chip>
-                </template>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn color="primary" variant="flat" block>
-              <v-icon left>mdi-plus</v-icon>
-              Add Transaction
+            <v-btn color="primary" size="large" @click="openGalaDialog" prepend-icon="mdi-upload">
+              Convert GALA Data
             </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <v-row class="mt-4">
-      <v-col cols="12">
-        <v-card>
-          <v-card-title>
-            <v-icon left>mdi-clock-outline</v-icon>
-            Recent Transactions
-          </v-card-title>
-          <v-card-text>
-            <v-alert type="info" variant="outlined">
-              No transactions yet. Start by adding your first transaction!
-            </v-alert>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- GALA Conversion Dialog -->
+    <v-dialog v-model="galaDialog" max-width="800px" persistent>
+      <v-card>
+        <v-card-title class="text-h5 primary--text">
+          <v-icon class="mr-2">mdi-file-chart</v-icon>
+          GALA Rewards Converter
+        </v-card-title>
+
+        <v-card-text>
+          <v-textarea
+            v-model="galaText"
+            label="Paste your GALA rewards text data here"
+            placeholder="You received 123.45 GALA&#10;You received 67.89 GALA&#10;..."
+            rows="10"
+            variant="outlined"
+            :disabled="isProcessing"
+          ></v-textarea>
+
+          <v-alert v-if="successMessage" type="success" class="mt-3">
+            {{ successMessage }}
+          </v-alert>
+
+          <v-alert v-if="errorMessage" type="error" class="mt-3">
+            {{ errorMessage }}
+          </v-alert>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="grey" variant="text" @click="galaDialog = false" :disabled="isProcessing">
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            @click="convertToCoinledger"
+            :loading="isProcessing"
+            :disabled="!galaText.trim()"
+          >
+            Convert to CoinLedger Format
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
