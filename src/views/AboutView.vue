@@ -26,15 +26,24 @@
                   </v-card-title>
                   <v-card-text>
                     <v-list density="compact">
-                      <v-list-item prepend-icon="mdi-chart-line">
-                        Real-time price tracking
+                      <v-list-item prepend-icon="mdi-file-document-edit-outline">
+                        GALA Rewards to CSV Converter
                       </v-list-item>
-                      <v-list-item prepend-icon="mdi-wallet"> Portfolio management </v-list-item>
-                      <v-list-item prepend-icon="mdi-history"> Transaction history </v-list-item>
-                      <v-list-item prepend-icon="mdi-chart-pie">
-                        Performance analytics
+                      <v-list-item prepend-icon="mdi-pickaxe">
+                        FLUX Mining to CSV Converter
                       </v-list-item>
-                      <v-list-item prepend-icon="mdi-security"> Secure and private </v-list-item>
+                      <v-list-item prepend-icon="mdi-file-upload-outline">
+                        POKT Rewards to CSV Converter
+                      </v-list-item>
+                      <v-list-item prepend-icon="mdi-cellphone-link">
+                        Responsive Design
+                      </v-list-item>
+                      <v-list-item prepend-icon="mdi-theme-light-dark">
+                        Dark Mode UI
+                      </v-list-item>
+                      <v-list-item prepend-icon="mdi-download-box-outline">
+                        Progressive Web App (PWA)
+                      </v-list-item>
                     </v-list>
                   </v-card-text>
                 </v-card>
