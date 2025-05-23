@@ -7,7 +7,7 @@ const drawer = ref(false)
 
 <template>
   <v-app>
-    <v-app-bar color="primary" prominent dark>
+    <v-app-bar color="primary" prominent>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>CoinLedger WebApp</v-toolbar-title>
       <v-spacer></v-spacer>
@@ -33,10 +33,6 @@ const drawer = ref(false)
 /* Ensure full width for the entire app */
 .v-application {
   max-width: none !important;
-}
-
-.v-main {
-  padding: 0 !important;
 }
 
 /* Remove any default container constraints */
