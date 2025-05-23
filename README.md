@@ -5,12 +5,14 @@ A modern web application for converting cryptocurrency reward data to CoinLedger
 ## 🚀 Features
 
 ### 💰 **GALA Rewards Converter**
+
 - Convert GALA rewards text data to CoinLedger CSV format
 - Detects "You received X GALA" entries from pasted text
 - Automatically generates dates working backwards from today
 - Transaction type: "Mining Income"
 
 ### ⚡ **FLUX Mining Converter**
+
 - Convert FLUX mining text data to CoinLedger CSV format
 - Parses mining confirmations with timestamps
 - Extracts exact datetime and amounts from mining logs
@@ -18,12 +20,14 @@ A modern web application for converting cryptocurrency reward data to CoinLedger
 - Transaction type: "Mining"
 
 ### 🌐 **POKT Rewards Converter**
+
 - Upload and convert POKT CSV files to CoinLedger format
 - Processes only "Rewards Rollover" transaction types
 - Converts date format from YYYY-MM-DD to MM/DD/YYYY
 - Transaction type: "Income"
 
 ### ✨ **Additional Features**
+
 - 🌙 **Dark Mode Interface** - Modern dark theme with high contrast
 - 📱 **Responsive Design** - Works on desktop, tablet, and mobile
 - 🔄 **Progressive Web App** - Offline capabilities and app-like experience
@@ -75,18 +79,21 @@ The application is configured for GitHub Pages deployment with automatic CI/CD:
 ## 📖 Usage
 
 ### GALA Converter
+
 1. Click "Convert GALA Data"
 2. Paste text containing "You received X GALA" entries
 3. Click "Convert to CoinLedger Format"
 4. CSV downloads as `gala_rewards_data.csv`
 
 ### FLUX Converter
+
 1. Click "Convert FLUX Data"
 2. Paste mining log text with confirmation entries
-3. Click "Convert to CoinLedger Format" 
+3. Click "Convert to CoinLedger Format"
 4. CSV downloads as `FLUX_output.csv`
 
 ### POKT Converter
+
 1. Click "Convert POKT CSV"
 2. Upload your POKT CSV file
 3. Click "Convert to CoinLedger Format"
@@ -95,10 +102,11 @@ The application is configured for GitHub Pages deployment with automatic CI/CD:
 ## 📄 CSV Output Format
 
 All converters generate CoinLedger-compatible CSV files with these columns:
+
 - Date (UTC)
 - Platform (Optional)
 - Asset Sent
-- Amount Sent  
+- Amount Sent
 - Asset Received
 - Amount Received
 - Fee Currency (Optional)
@@ -110,6 +118,7 @@ All converters generate CoinLedger-compatible CSV files with these columns:
 ## 🎨 Screenshots
 
 The application features a modern dark mode interface with:
+
 - Three-column responsive layout
 - Branded cryptocurrency logos
 - Material Design components
@@ -127,10 +136,11 @@ The application features a modern dark mode interface with:
 
 This project is open source and available under the MIT License.
 npm run build
-```
+
+````
 
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
-```
+````

@@ -28,3 +28,19 @@ const drawer = ref(false)
     </v-main>
   </v-app>
 </template>
+
+<style>
+/* Ensure full width for the entire app */
+.v-application {
+  max-width: none !important;
+}
+
+.v-main {
+  padding: 0 !important;
+}
+
+/* Remove any default container constraints */
+.v-container {
+  max-width: none !important;
+}
+</style>

@@ -16,6 +16,21 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
       },
+      manifest: {
+        name: 'Coin Ledger Conversion Tool',
+        short_name: 'CoinLedger',
+        description: 'Convert cryptocurrency reward data to CoinLedger CSV format',
+        theme_color: '#1976D2',
+        background_color: '#121212',
+        display: 'standalone',
+        icons: [
+          {
+            src: '/src/assets/favicon.ico',
+            sizes: '16x16 32x32',
+            type: 'image/x-icon',
+          },
+        ],
+      },
     }),
   ],
   resolve: {

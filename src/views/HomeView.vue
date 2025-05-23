@@ -50,21 +50,22 @@ const parseGalaRewards = (text: string) => {
 
 const parseFluxMining = (text: string) => {
   // Pattern to capture FLUX mining data
-  const pattern = /Mined (\w{3} \d{1,2}, \d{4} \d{1,2}:\d{2}:\d{2} [APM]{2}).+?CONFIRMATIONS (\d+\.\d+)/gs
+  const pattern =
+    /Mined (\w{3} \d{1,2}, \d{4} \d{1,2}:\d{2}:\d{2} [APM]{2}).+?CONFIRMATIONS (\d+\.\d+)/gs
   const matches = []
   let match
 
   while ((match = pattern.exec(text)) !== null) {
     const dateTimeStr = match[1]
     const amount = match[2]
-    
+
     try {
       // Parse the datetime string
       const parsedDate = new Date(dateTimeStr)
       if (!isNaN(parsedDate.getTime())) {
         matches.push({
           dateTime: parsedDate,
-          amount: amount
+          amount: amount,
         })
       }
     } catch (error) {
@@ -118,7 +119,7 @@ const generateCSV = (amounts: string[], assetType: 'GALA' | 'FLUX' = 'GALA') => 
   return rows.join('\n')
 }
 
-const generateFluxCSV = (fluxEntries: Array<{dateTime: Date, amount: string}>) => {
+const generateFluxCSV = (fluxEntries: Array<{ dateTime: Date; amount: string }>) => {
   // CSV headers
   const headers = [
     'Date (UTC)',
@@ -137,7 +138,8 @@ const generateFluxCSV = (fluxEntries: Array<{dateTime: Date, amount: string}>) =
   const rows = [headers.join(',')]
 
   fluxEntries.forEach((entry) => {
-    const formattedDate = entry.dateTime.toLocaleDateString('en-US') + ' ' + entry.dateTime.toLocaleTimeString('en-US')
+    const formattedDate =
+      entry.dateTime.toLocaleDateString('en-US') + ' ' + entry.dateTime.toLocaleTimeString('en-US')
 
     const row = [
       formattedDate,
@@ -254,16 +256,16 @@ const parsePoktCSV = (csvText: string) => {
   }
 
   // Get headers and trim whitespace
-  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''))
+  const headers = lines[0].split(',').map((h) => h.trim().replace(/"/g, ''))
   const results = []
 
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim()
     if (!line) continue
 
-    const values = line.split(',').map(v => v.trim().replace(/"/g, ''))
+    const values = line.split(',').map((v) => v.trim().replace(/"/g, ''))
     const row: any = {}
-    
+
     headers.forEach((header, index) => {
       row[header] = values[index] || ''
     })
@@ -300,7 +302,8 @@ const generatePoktCSV = (poktEntries: Array<any>) => {
     let formattedDate = entry.Date
     try {
       const dateObj = new Date(entry.Date)
-      formattedDate = dateObj.toLocaleDateString('en-US') + ' ' + dateObj.toLocaleTimeString('en-US')
+      formattedDate =
+        dateObj.toLocaleDateString('en-US') + ' ' + dateObj.toLocaleTimeString('en-US')
     } catch (error) {
       console.warn('Failed to parse date:', entry.Date)
     }
@@ -338,7 +341,8 @@ const convertPoktToCoinledger = async () => {
     const poktEntries = parsePoktCSV(fileText)
 
     if (poktEntries.length === 0) {
-      errorMessage.value = 'No "Rewards Rollover" entries found in the CSV file. Please check your data.'
+      errorMessage.value =
+        'No "Rewards Rollover" entries found in the CSV file. Please check your data.'
       return
     }
 
@@ -361,14 +365,16 @@ const convertPoktToCoinledger = async () => {
 </script>
 
 <template>
-  <v-container>
+  <v-container fluid class="pa-2 pa-md-4">
     <v-row>
       <v-col cols="12">
         <v-card class="mb-6">
-          <v-card-title class="text-h4 primary--text">
+          <v-card-title class="text-h4 primary--text text-center">
             Welcome to the CoinLedger Conversion Tool
           </v-card-title>
-          <v-card-subtitle class="text-center">Convert your cryptocurrency data to CoinLedger CSV format</v-card-subtitle>
+          <v-card-subtitle class="text-center"
+            >Convert your cryptocurrency data to CoinLedger CSV format</v-card-subtitle
+          >
         </v-card>
       </v-col>
     </v-row>
@@ -391,10 +397,17 @@ const convertPoktToCoinledger = async () => {
             </div>
 
             <p class="text-body-1 mb-4">
-              Convert GALA rewards text data to CoinLedger CSV format. Detects "You received X GALA" entries.
+              Convert GALA rewards text data to CoinLedger CSV format. Detects "You received X GALA"
+              entries.
             </p>
 
-            <v-btn color="primary" size="large" @click="openGalaDialog" prepend-icon="mdi-upload" block>
+            <v-btn
+              color="primary"
+              size="large"
+              @click="openGalaDialog"
+              prepend-icon="mdi-upload"
+              block
+            >
               Convert GALA Data
             </v-btn>
           </v-card-text>
@@ -410,18 +423,21 @@ const convertPoktToCoinledger = async () => {
           </v-card-title>
           <v-card-text>
             <div class="text-center mb-4">
-              <img
-                :src="FluxImage"
-                alt="Flux Logo"
-                style="max-width: 150px; height: auto"
-              />
+              <img :src="FluxImage" alt="Flux Logo" style="max-width: 150px; height: auto" />
             </div>
 
             <p class="text-body-1 mb-4">
-              Convert FLUX mining text data to CoinLedger CSV format. Detects mining confirmations with timestamps.
+              Convert FLUX mining text data to CoinLedger CSV format. Detects mining confirmations
+              with timestamps.
             </p>
 
-            <v-btn color="secondary" size="large" @click="openFluxDialog" prepend-icon="mdi-upload" block>
+            <v-btn
+              color="primary"
+              size="large"
+              @click="openFluxDialog"
+              prepend-icon="mdi-upload"
+              block
+            >
               Convert FLUX Data
             </v-btn>
           </v-card-text>
@@ -437,19 +453,22 @@ const convertPoktToCoinledger = async () => {
           </v-card-title>
           <v-card-text>
             <div class="text-center mb-4">
-              <img
-                :src="PoktImage"
-                alt="POKT Logo"
-                style="max-width: 150px; height: auto"
-              />
+              <img :src="PoktImage" alt="POKT Logo" style="max-width: 150px; height: auto" />
             </div>
 
             <p class="text-body-1 mb-4">
-              Convert POKT rewards CSV file to CoinLedger format. Upload your CSV file with "Rewards Rollover" entries.
+              Convert POKT rewards CSV file to CoinLedger format. Upload your CSV file with "Rewards
+              Rollover" entries.
             </p>
 
-            <v-btn color="success" size="large" @click="openPoktDialog" prepend-icon="mdi-file-upload" block>
-              Convert POKT CSV
+            <v-btn
+              color="primary"
+              size="large"
+              @click="openPoktDialog"
+              prepend-icon="mdi-upload"
+              block
+            >
+              Convert POKT Data
             </v-btn>
           </v-card-text>
         </v-card>
@@ -518,11 +537,7 @@ const convertPoktToCoinledger = async () => {
 
         <v-card-text>
           <div class="text-center mb-4">
-            <img
-              :src="FluxImage"
-              alt="Flux Logo"
-              style="max-width: 200px; height: auto"
-            />
+            <img :src="FluxImage" alt="Flux Logo" style="max-width: 200px; height: auto" />
           </div>
 
           <v-textarea
@@ -549,7 +564,7 @@ const convertPoktToCoinledger = async () => {
             Cancel
           </v-btn>
           <v-btn
-            color="secondary"
+            color="primary"
             @click="convertFluxToCoinledger"
             :loading="isProcessing"
             :disabled="!fluxText.trim()"
@@ -570,15 +585,12 @@ const convertPoktToCoinledger = async () => {
 
         <v-card-text>
           <div class="text-center mb-4">
-            <img
-              :src="PoktImage"
-              alt="POKT Logo"
-              style="max-width: 200px; height: auto"
-            />
+            <img :src="PoktImage" alt="POKT Logo" style="max-width: 200px; height: auto" />
           </div>
 
           <p class="text-body-1 mb-4">
-            Upload your POKT CSV file containing "Rewards Rollover" entries. The tool will process only those entries and convert them to CoinLedger format.
+            Upload your POKT CSV file containing "Rewards Rollover" entries. The tool will process
+            only those entries and convert them to CoinLedger format.
           </p>
 
           <v-file-input
@@ -605,7 +617,7 @@ const convertPoktToCoinledger = async () => {
             Cancel
           </v-btn>
           <v-btn
-            color="success"
+            color="primary"
             @click="convertPoktToCoinledger"
             :loading="isProcessing"
             :disabled="!poktFile"
@@ -617,3 +629,34 @@ const convertPoktToCoinledger = async () => {
     </v-dialog>
   </v-container>
 </template>
+
+<style scoped>
+/* Ensure full width utilization */
+.v-container--fluid {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Remove any default margins on cards and rows */
+.v-row {
+  margin: 0 !important;
+}
+
+.v-col {
+  padding: 8px !important;
+}
+
+/* Ensure cards stretch to full height */
+.v-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.v-card-text {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+</style>
