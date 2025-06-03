@@ -192,7 +192,7 @@ const convertToCoinledger = async () => {
     }
 
     const csvContent = generateCSV(amounts, 'GALA')
-    downloadCSV(csvContent, 'gala_rewards_data.csv')
+    downloadCSV(csvContent, 'galaData.csv')
 
     successMessage.value = `Successfully converted ${amounts.length} GALA reward entries to CSV format!`
 
@@ -226,7 +226,7 @@ const convertFluxToCoinledger = async () => {
     }
 
     const csvContent = generateFluxCSV(fluxEntries)
-    downloadCSV(csvContent, 'FLUX_output.csv')
+    downloadCSV(csvContent, 'fluxOutput.csv')
 
     successMessage.value = `Successfully converted ${fluxEntries.length} FLUX mining entries to CSV format!`
 
@@ -347,7 +347,7 @@ const convertPoktToCoinledger = async () => {
     }
 
     const csvContent = generatePoktCSV(poktEntries)
-    downloadCSV(csvContent, 'POKT_output.csv')
+    downloadCSV(csvContent, 'PoktOutput.csv')
 
     successMessage.value = `Successfully converted ${poktEntries.length} POKT reward entries to CSV format!`
 
